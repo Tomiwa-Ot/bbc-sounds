@@ -5,17 +5,21 @@ import subprocess
 import platform
 import requests
 import argparse
+import shutil
 
 URL = ""
 ID =  ""
 PROG_TYPE = ""
 FILE_META_DATA = {}
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393"
+HEADERS = {
+    "User-Agent" : USER_AGENT
+}
 
 def parse_args():
     parser = argparse.ArgumentParser(
         prog="iplayer",
-        description="",
+        description="Description: downloads radio and tv programmes from BBC Sounds & BBC iplayer",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
@@ -53,27 +57,33 @@ def get_audio_meta_data():
         req = f"{req}{ID}.json"
     else:
         req = f"{req}{ID}.json"
-    resp = requests.get(req)
+    resp = requests.get(req, headers=HEADERS)
     FILE_META_DATA = resp.json
     req = f"https://open.live.bbc.co.uk/mediaselector/6/version/2.0/mediaset/pc/vpid/{FILE_META_DATA['versions'][0]['pid']}"
-    resp = requests.get(req)
+    resp = requests.get(req, headers=HEADERS)
     FILE_META_DATA.update(resp.json)
 
 def get_video_meta_data():
     pass
 
 def download_thumbnail():
+    print("[+] Downloading thumbnail ...")
     if PROG_TYPE == "audio":
         req = f"https:{FILE_META_DATA['holdingImage']}"
-        resp = requests.get(req)
-        with open(f"iplayer/{ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}", "rb") as f:
-            f.write(resp._content)
-            f.close()
+        resp = requests.get(req, headers=HEADERS, stream=True)
+        with open(f"iplayer/{ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}", "wb") as f:
+            shutil.copyfileobj(resp.raw, f)
+            print(f"[+] Thumbnail saved {ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}")
     else:
         pass
 
 def download_file(mpd_link):
-    pass
+    audio_cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\" album=\"{FILE_META_DATA['programme']['display_title']['title']}\" publisher=\"{FILE_META_DATA['programme']['ownership']['service']['title']}\""
+    video_cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\" description=\"\" year=\"\" author=\"\" genre=\"\""
+    if PROG_TYPE == "audio":
+        print(subprocess.Popen(audio_cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
+    else:
+        print(subprocess.Popen(video_cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
 
 def is_ffmpeg_installed():
     if platform.system() == "Windows":
