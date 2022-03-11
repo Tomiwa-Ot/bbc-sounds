@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from future import print_function
+from colorama import Fore
 import subprocess
 import platform
 import requests
@@ -36,7 +37,7 @@ def parse_args():
     )
     args = parser.parse_args()
     if not args.type == "audio" or not args.type == "video":
-        print("[+] Invalid programme type")
+        print(Fore.RED + "[!] Invalid programme type")
         exit(1)
     if args.url is not None and args.id is not None:
         print("[+] Specify either --url or --id")
@@ -73,7 +74,7 @@ def download_thumbnail():
         resp = requests.get(req, headers=HEADERS, stream=True)
         with open(f"iplayer/{ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}", "wb") as f:
             shutil.copyfileobj(resp.raw, f)
-            print(f"[+] Thumbnail saved {ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}")
+            print(Fore.GREEN + f"[+] Thumbnail saved {ID}.{FILE_META_DATA['holdingImage'].split('.')[-1]}")
     else:
         pass
 
@@ -89,12 +90,12 @@ def is_ffmpeg_installed():
     if platform.system() == "Windows":
         if b"'ffmpeg' is not recognized as an internal or external command" in subprocess.Popen(
             "ffmpeg", shell=True, stderr=subprocess.PIPE).stderr.read():
-            print("[+] ffmpeg is not installed")
+            print(Fore.RED + "[!] ffmpeg is not installed")
             exit(1)
     else:
         if b"ffmpeg: not found" in subprocess.Popen(
             "ffmpeg", shell=True, stderr=subprocess.PIPE).stderr.read():
-            print("[+] ffmpeg is not installed")
+            print(Fore.RED + "[!] ffmpeg is not installed")
             exit(1)
 
 def main():
