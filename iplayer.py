@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# Author: https://github.com/Tomiwa-Ot
+# Description: Download shows from BBC iplayer & BBC Sounds
+# License: GPLv3 (see LICENSE.txt)
+
+
 from future import print_function
 from colorama import Fore
 import subprocess
@@ -14,7 +19,8 @@ PROG_TYPE = ""
 FILE_META_DATA = {}
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393"
 HEADERS = {
-    "User-Agent" : USER_AGENT
+    "User-Agent" : USER_AGENT,
+    "Accept-Encoding" : "gzip,deflate"
 }
 
 def parse_args():
@@ -51,6 +57,7 @@ def parse_args():
         ID = args.id
     PROG_TYPE = args.type
 
+
 def get_audio_meta_data():
     req = "https://bbc.co.uk/programmes/"
     if URL is not None:
@@ -58,14 +65,17 @@ def get_audio_meta_data():
         req = f"{req}{ID}.json"
     else:
         req = f"{req}{ID}.json"
+    # check if request fails
     resp = requests.get(req, headers=HEADERS)
     FILE_META_DATA = resp.json
     req = f"https://open.live.bbc.co.uk/mediaselector/6/version/2.0/mediaset/pc/vpid/{FILE_META_DATA['versions'][0]['pid']}"
     resp = requests.get(req, headers=HEADERS)
     FILE_META_DATA.update(resp.json)
 
+
 def get_video_meta_data():
     pass
+
 
 def download_thumbnail():
     print("[+] Downloading thumbnail ...")
@@ -78,6 +88,7 @@ def download_thumbnail():
     else:
         pass
 
+
 def download_file(mpd_link):
     audio_cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\" album=\"{FILE_META_DATA['programme']['display_title']['title']}\" publisher=\"{FILE_META_DATA['programme']['ownership']['service']['title']}\""
     video_cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\" description=\"\" year=\"\" author=\"\" genre=\"\""
@@ -85,6 +96,8 @@ def download_file(mpd_link):
         print(subprocess.Popen(audio_cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
     else:
         print(subprocess.Popen(video_cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
+    print(Fore.GREEN + "[+] Download complete")
+
 
 def is_ffmpeg_installed():
     if platform.system() == "Windows":
@@ -98,6 +111,7 @@ def is_ffmpeg_installed():
             print(Fore.RED + "[!] ffmpeg is not installed")
             exit(1)
 
+
 def main():
     parse_args()
     is_ffmpeg_installed()
@@ -106,6 +120,7 @@ def main():
     else:
         get_video_meta_data()
     download_file()
+
 
 if __name__ == "__main__":
     main()
