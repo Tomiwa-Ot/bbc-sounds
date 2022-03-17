@@ -16,7 +16,9 @@ import shutil
 URL = ""
 ID =  ""
 FILE_META_DATA = {}
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"  \
+            "AppleWebKit/537.36 (KHTML, like Gecko)" \
+            "Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393"
 HEADERS = {
     "User-Agent" : USER_AGENT,
     "Accept-Encoding" : "gzip,deflate"
@@ -74,7 +76,9 @@ def download_thumbnail():
 
 
 def download_file(mpd_link):
-    cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\" album=\"{FILE_META_DATA['programme']['display_title']['title']}\" publisher=\"{FILE_META_DATA['programme']['ownership']['service']['title']}\""
+    cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\"" \
+        f"album=\"{FILE_META_DATA['programme']['display_title']['title']}\" publisher=\""  \
+        f"{FILE_META_DATA['programme']['ownership']['service']['title']}\""
     print(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
     print(Fore.GREEN + "[+] Download complete")
 
