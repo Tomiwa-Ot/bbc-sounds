@@ -75,9 +75,8 @@ def download_thumbnail():
 
 
 def download_file(mpd_link):
-    cmd = f"ffmpeg -i {mpd_link} -metadata title=\"{FILE_META_DATA['programme']['title']}\"" \
-        f"album=\"{FILE_META_DATA['programme']['display_title']['title']}\" publisher=\""  \
-        f"{FILE_META_DATA['programme']['ownership']['service']['title']}\""
+    # option of best and worse
+    cmd = f"streamlink {mpd_link} -o {FILE_META_DATA['']}.m4a"
     print(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
     print(Fore.GREEN + "[+] Download complete")
 
