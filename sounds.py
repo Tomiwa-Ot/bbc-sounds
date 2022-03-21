@@ -81,10 +81,10 @@ def download_file(mpd_link):
     print(Fore.GREEN + "[+] Download complete")
 
 
-def is_ffmpeg_installed():
+def is_streamlink_installed():
     if platform.system() == "Windows":
         if b"'ffmpeg' is not recognized as an internal or external command" in subprocess.Popen(
-            "ffmpeg", shell=True, stderr=subprocess.PIPE).stderr.read():
+            "streamlink", shell=True, stderr=subprocess.PIPE).stderr.read():
             print(Fore.RED + "[!] ffmpeg is not installed")
             exit(1)
     else:
@@ -96,7 +96,7 @@ def is_ffmpeg_installed():
 
 def main():
     parse_args()
-    is_ffmpeg_installed()
+    is_streamkink_installed()
     get_audio_meta_data()
     download_file()
 
