@@ -31,15 +31,15 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--url", type=str, required=False,
+        "-u", "--url", type=str, required=False,
         help="url of the programme"
     )
     parser.add_argument(
-        "--id", type=str, required=False,
+        "-i", "--id", type=str, required=False,
         help="id of the programme"
     )
     parser.add_argument(
-        "--quality", type=str, required=True,
+        "-q", "--quality", type=str, required=True,
         help="quality of the download"
     )
     args = parser.parse_args()
