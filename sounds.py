@@ -124,11 +124,12 @@ def is_streamlink_installed():
 
 
 def main():
+    global file_meta_data
     parse_args()
     is_streamlink_installed()
     get_audio_meta_data()
     download_thumbnail()
-    download_file()
+    download_file(file_meta_data[2]['media']['connection'][0]['href'])
 
 
 if __name__ == "__main__":
