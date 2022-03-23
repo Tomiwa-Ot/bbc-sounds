@@ -86,10 +86,10 @@ def get_audio_meta_data():
         file_meta_data.append(resp.json())
     req = f"https://open.live.bbc.co.uk/mediaselector/6/version/2.0/mediaset/pc/vpid/{file_meta_data[0]['programme']['versions'][0]['pid']}"
     resp = requests.get(req, headers=HEADERS)
-    # if resp.status_code != 200:
-    #     print(Fore.RED + f"[!] GET request to {resp.url} failed: {resp.status_code}")
-    #     exit(1)
-    # file_meta_data.append(resp.json())
+    if resp.status_code != 200:
+        print(Fore.RED + f"[!] GET request to {resp.url} failed: {resp.status_code}")
+        exit(1)
+    file_meta_data.append(resp.json())
     
 
 
